@@ -1,9 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"job-test/api"
-	"job-test/config"
+	"os"
 
 	_ "job-test/docs"
 
@@ -22,11 +21,16 @@ import (
 // @BasePath /
 
 func main() {
-	config := config.LoadConfig()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // default for local dev
+	}
+	// config := config.LoadConfig()
+
 	server := gin.Default()
 	api.InitApi(server)
 	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	if err := server.Run(fmt.Sprintf(":%d", config.App.Port)); err != nil {
+	if err := server.Run(":" + port); err != nil {
 		panic("Error run project on port!")
 	}
 }
