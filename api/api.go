@@ -1,6 +1,7 @@
 package api
 
 import (
+	"embed"
 	"job-test/internal/pack"
 	"net/http"
 	"strconv"
@@ -106,14 +107,14 @@ func incorrect(c *gin.Context) {
 	})
 }
 
-func InitApi(r *gin.Engine) {
-	// static files
-	r.Static("/static", "./static") // For CSS, JS, images
-	// Serve index.html at /
-	r.GET("/", func(c *gin.Context) { // Serve index.html at /
-		c.File("./static/index.html")
+func InitApi(r *gin.Engine, fs embed.FS) {
+	r.GET("/", func(c *gin.Context) {
+		data, _ := fs.ReadFile("static/index.html")
+		c.Data(http.StatusOK, "text/html; charset=utf-8", data)
 	})
+	r.StaticFS("/static", http.FS(fs))
 
+	// API routes
 	r.POST("/set-sizes", setSizes)
 	r.GET("/correct", correct)
 	r.GET("/incorrect", incorrect)

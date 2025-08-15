@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"job-test/api"
 	"os"
 
@@ -10,6 +11,9 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+//go:embed static/*
+var StaticFiles embed.FS
 
 // @title Pack-Service
 // @version 1.0
@@ -28,7 +32,7 @@ func main() {
 	// config := config.LoadConfig()
 
 	server := gin.Default()
-	api.InitApi(server)
+	api.InitApi(server, StaticFiles)
 	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	if err := server.Run(":" + port); err != nil {
 		panic("Error run project on port!")
