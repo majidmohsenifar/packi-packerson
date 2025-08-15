@@ -1,0 +1,67 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server for a Gin application.",
+        "title": "Pack-Service",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/correct": {
+            "get": {
+                "description": "Give correct",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pack"
+                ],
+                "summary": "Get Correct",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "X is number",
+                        "name": "x",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/incorrect": {
+            "get": {
+                "description": "Give incorrect",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pack"
+                ],
+                "summary": "Get Incorrect",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "X is number",
+                        "name": "x",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        }
+    }
+}

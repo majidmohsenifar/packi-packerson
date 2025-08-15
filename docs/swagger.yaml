@@ -1,0 +1,46 @@
+basePath: /
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample server for a Gin application.
+  termsOfService: http://swagger.io/terms/
+  title: Pack-Service
+  version: "1.0"
+paths:
+  /correct:
+    get:
+      consumes:
+      - application/json
+      description: Give correct
+      parameters:
+      - description: X is number
+        in: query
+        name: x
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Get Correct
+      tags:
+      - pack
+  /incorrect:
+    get:
+      consumes:
+      - application/json
+      description: Give incorrect
+      parameters:
+      - description: X is number
+        in: query
+        name: x
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Get Incorrect
+      tags:
+      - pack
+schemes:
+- http
+swagger: "2.0"
