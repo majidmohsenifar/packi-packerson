@@ -108,12 +108,12 @@ func incorrect(c *gin.Context) {
 
 func InitApi(r *gin.Engine) {
 	// static files
-	r.StaticFS("/static", http.Dir("static"))
-
+	r.Static("/static", "./static") // For CSS, JS, images
 	// Serve index.html at /
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/", func(c *gin.Context) { // Serve index.html at /
 		c.File("./static/index.html")
 	})
+
 	r.POST("/set-sizes", setSizes)
 	r.GET("/correct", correct)
 	r.GET("/incorrect", incorrect)
