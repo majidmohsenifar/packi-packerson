@@ -9,21 +9,19 @@
         input, button { padding: 0.5rem; margin: 0.2rem 0; width: 100%; }
         form { margin-bottom: 1.5rem; }
         .result { background: #f0f0f0; padding: 1rem; margin-top: 1rem; border-radius: 5px; }
-        <!-- .sizes-list { margin-top: 0.5rem; padding: 0; list-style: none; } -->
-        <!-- .sizes-list li { background: #eee; padding: 0.3rem 0.5rem; margin: 0.2rem 0; border-radius: 3px; display: flex; justify-content: space-between; } -->
-        <!-- .remove-btn { cursor: pointer; color: red; font-weight: bold; } -->
-
+        
+        /* Sizes tags */
         .sizes-tags {
-           display: flex;
-           flex-wrap: wrap;
-           gap: 0.5rem;
-           padding: 0;
-           margin: 0.5rem 0;
-           list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0;
+            margin: 0.5rem 0;
+            list-style: none;
         }
 
         .sizes-tags li {
-            background: #e5e7eb; /* light gray */
+            background: #e5e7eb;
             border-radius: 6px;
             padding: 0.3rem 0.6rem;
             display: flex;
@@ -34,34 +32,52 @@
 
         .remove-btn {
             cursor: pointer;
-            color: #b91c1c; /* dark red */
+            color: #b91c1c;
             font-weight: bold;
         }
 
+        /* Packs tags */
+        .packs-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0;
+            list-style: none;
+        }
+
+        .packs-tags li {
+            background: #dbeafe; /* light blue */
+            border-radius: 6px;
+            padding: 0.3rem 0.6rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <h1>📦 Pack Calculator</h1>
 
-<!-- Form A: Submit package sizes -->
+<!-- Form A: Set Package Sizes -->
 <form @submit.prevent="submitSizes">
     <h2>Set Package Sizes</h2>
     <label>Add New Size</label>
     <input type="number" x-model.number="newSize" placeholder="Example: 750" />
     <button type="button" @click="addSize">Add Size</button>
+
+    <!-- Display sizes as tags -->
     <ul class="sizes-tags">
-    <template x-for="(size, index) in sizes" :key="size">
-        <li>
-            <span x-text="size"></span>
-            <span class="remove-btn" @click="removeSize(index)">✖</span>
-        </li>
-    </template>
+        <template x-for="(size, index) in sizes" :key="size">
+            <li>
+                <span x-text="size"></span>
+                <span class="remove-btn" @click="removeSize(index)">✖</span>
+            </li>
+        </template>
     </ul>
+
     <button type="submit">Save Sizes</button>
 </form>
 
-<!-- Form B: Calculate pack distribution -->
+<!-- Form B: Calculate Order -->
 <form @submit.prevent="calculatePacks">
     <h2>Calculate Order</h2>
     <label>Order Quantity</label>
@@ -70,14 +86,14 @@
 </form>
 
 <!-- Result -->
-<div class="result" x-show="Object.keys(result.packs).length > 0">
+<div class="result" x-show="result.packsList.length > 0">
     <h3>Result</h3>
     <p>Ordered: <strong x-text="result.ordered"></strong></p>
-    <ul>
-        <template x-for="[size, count] in Object.entries(result.packs)" :key="size">
+    
+    <ul class="packs-tags">
+        <template x-for="(p, index) in result.packsList" :key="index">
             <li>
-                <strong x-text="size"></strong> pack × 
-                <span x-text="count"></span>
+                <span x-text="p.pack_size"></span> × <span x-text="p.count"></span>
             </li>
         </template>
     </ul>
@@ -89,7 +105,7 @@ function packCalculator() {
         sizes: [5000, 2000, 1000, 500, 250],
         newSize: null,
         orderQuantity: null,
-        result: { ordered: 0, packs: {} },
+        result: { ordered: 0, packsList: [] },
 
         addSize() {
             if (this.newSize && !this.sizes.includes(this.newSize)) {
@@ -112,7 +128,10 @@ function packCalculator() {
                 let json = await res.json();
 
                 if (json.status) {
-                    this.sizes = json.data.sizes; // Update from server response
+                    // Keep the sizes in UI (or update from server if provided)
+                    if (json.data?.sizes?.length) {
+                        this.sizes = json.data.sizes;
+                    }
                     alert('Sizes saved!');
                 } else {
                     alert('Error saving sizes');
@@ -128,10 +147,12 @@ function packCalculator() {
                 let res = await fetch(`/correct?x=${this.orderQuantity}`);
                 let json = await res.json();
 
-                if (json.status) {
-                    this.result = json.data;
+                if (json.status && json.data?.packs?.packs?.length) {
+                    this.result.ordered = json.data.ordered;
+                    this.result.packsList = json.data.packs.packs;
                 } else {
-                    alert('API returned an error');
+                    this.result.packsList = [];
+                    alert('API returned an error or no packs found');
                 }
             } catch (err) {
                 console.error(err);
@@ -141,6 +162,7 @@ function packCalculator() {
     }
 }
 </script>
+
 </body>
 </html>
 

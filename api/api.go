@@ -75,7 +75,7 @@ func correct(c *gin.Context) {
 	if x == 0 {
 		return // Early return if validation fails
 	}
-	packs := pack.Correct(x)
+	packs := pack.CalculateNeededPackSizes(c, int(x))
 	c.JSON(http.StatusOK, gin.H{
 		"status": true,
 		"data": gin.H{
